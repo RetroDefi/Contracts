@@ -1711,12 +1711,4 @@ contract NativeFarm is Ownable, ReentrancyGuard {
             IERC20(NATIVE).transfer(_to, _NATIVEAmt);
         }
     }
-
-    function inCaseTokensGetStuck(address _token, uint256 _amount)
-        public
-        onlyOwner
-    {
-        require(_token != NATIVE, "!safe");
-        IERC20(_token).safeTransfer(msg.sender, _amount);
-    }
 }
