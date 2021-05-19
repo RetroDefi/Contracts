@@ -655,7 +655,7 @@ abstract contract Ownable is Context {
 
 contract QBERT is ERC20, Ownable {
      constructor() public ERC20("QBERT", "QBERT") {
-        _mint(msg.sender, 700_000_000000_000000_000000);
+        _mint(msg.sender, 850_000_000000_000000_000000);
     }
 
     function mint(address _to, uint256 _amount) public onlyOwner {
