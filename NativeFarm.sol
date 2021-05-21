@@ -1437,15 +1437,15 @@ contract NativeFarm is Ownable, ReentrancyGuard {
     }
 
     // Token address
-    address public NATIVE = 0x00000000000000000000000000000000000ToKEn;
+    address public NATIVE = 0x0000000000000000000000000000000000000000; //TOKEN
     // Owner reward per block: 5% ==> 6.11%
     uint256 public ownerNATIVEReward = 611;
     // Native total supply: 8 mil = 8000000e18
     uint256 public NATIVEMaxSupply = 8000000e18;
-    // Natives per block: (0.475646879756478 - owner 5%)
-    uint256 public NATIVEPerBlock = 428082191780822500; // NATIVE tokens created per block
-    // Approx 8/3/2021
-    uint256 public startBlock = 7617227; // https://bscscan.com/block/countdown/7617227
+    // Natives per block: (0.715646879756478 - owner 5%)
+    uint256 public NATIVEPerBlock = 678082191780822500; // NATIVE tokens created per block
+    // Approx start 26/5/2021
+    uint256 public startBlock = 7818827; // https://bscscan.com/block/countdown/7818827
 
     PoolInfo[] public poolInfo; // Info of each pool.
     mapping(uint256 => mapping(address => UserInfo)) public userInfo; // Info of each user that stakes LP tokens.
