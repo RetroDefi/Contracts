@@ -1442,8 +1442,8 @@ contract NativeFarm is Ownable, ReentrancyGuard {
     uint256 public ownerNATIVEReward = 611;
     // Native total supply: 8 mil = 8000000e18
     uint256 public NATIVEMaxSupply = 8000000e18;
-    // Natives per block: (0.715646879756478 - owner 5%)
-    uint256 public NATIVEPerBlock = 678082191780822500; // NATIVE tokens created per block
+    // Natives per block: (0.7610350076103648 - owner 5%)
+    uint256 public NATIVEPerBlock = 688082191780822500; // NATIVE tokens created per block
     // Approx start 26/5/2021
     uint256 public startBlock = 7818827; // https://bscscan.com/block/countdown/7818827
 
