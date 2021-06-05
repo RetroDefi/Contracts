@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at BscScan.com on 2021-01-09
-*/
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.6.12;
@@ -227,7 +223,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
      * @dev Returns the timestamp at with an operation becomes ready (0 for
      * unset operations, 1 for done operations).
      */
-    function getTimestamp(bytes32 id) public view returns (uint256 timestamp) {
+    function getTimestamp(bytes32 id) external view returns (uint256 timestamp) {
         return _timestamps[id];
     }
 
@@ -236,7 +232,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
      *
      * This value can be changed by executing an operation that calls `updateDelay`.
      */
-    function getMinDelay() public view returns (uint256 duration) {
+    function getMinDelay() external view returns (uint256 duration) {
         return minDelay;
     }
 
@@ -306,7 +302,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         bytes32 predecessor,
         bytes32 salt,
         uint256 delay
-    ) public virtual onlyRole(PROPOSER_ROLE) {
+    ) external virtual onlyRole(PROPOSER_ROLE) {
         require(
             targets.length == values.length,
             "TimelockController: length mismatch"
@@ -352,7 +348,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
      *
      * - the caller must have the 'proposer' role.
      */
-    function cancel(bytes32 id) public virtual onlyRole(PROPOSER_ROLE) {
+    function cancel(bytes32 id) external virtual onlyRole(PROPOSER_ROLE) {
         require(
             isOperationPending(id),
             "TimelockController: operation cannot be cancelled"
@@ -377,7 +373,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         bytes calldata data,
         bytes32 predecessor,
         bytes32 salt
-    ) public payable virtual onlyRole(EXECUTOR_ROLE) nonReentrant {
+    ) external payable virtual onlyRole(EXECUTOR_ROLE) nonReentrant {
         bytes32 id = hashOperation(target, value, data, predecessor, salt);
         _beforeCall(predecessor);
         _call(id, 0, target, value, data);
@@ -399,7 +395,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         bytes[] calldata datas,
         bytes32 predecessor,
         bytes32 salt
-    ) public payable virtual onlyRole(EXECUTOR_ROLE) nonReentrant {
+    ) external payable virtual onlyRole(EXECUTOR_ROLE) nonReentrant {
         require(
             targets.length == values.length,
             "TimelockController: length mismatch"
@@ -480,7 +476,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         minDelayReduced = newDelay;
     }
 
-    function setDevWalletAddress(address payable _devWalletAddress) public {
+    function setDevWalletAddress(address payable _devWalletAddress) external {
         require(msg.sender == address(this), "TimelockController: caller must be timelock");
         require(tx.origin == devWalletAddress, "tx.origin != devWalletAddress");
         require(_devWalletAddress != address(0), "_devWalletAddress can not be zero address");
@@ -497,7 +493,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         bool _withUpdate,
         bytes32 predecessor,
         bytes32 salt
-    ) public onlyRole(EXECUTOR_ROLE) {
+    ) external onlyRole(EXECUTOR_ROLE) {
         bytes32 id =
             keccak256(
                 abi.encode(
@@ -534,7 +530,7 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         bool _withUpdate,
         bytes32 predecessor,
         bytes32 salt
-    ) public payable virtual onlyRole(EXECUTOR_ROLE) nonReentrant {
+    ) external payable virtual onlyRole(EXECUTOR_ROLE) nonReentrant {
         bytes32 id =
             keccak256(
                 abi.encode(
@@ -555,12 +551,12 @@ contract TimelockController is AccessControl, ReentrancyGuard {
     /**
      * @dev No timelock functions
      */
-    function withdrawBNB() public payable {
+    function withdrawBNB() external payable {
         require(msg.sender == devWalletAddress, "!devWalletAddress");
         devWalletAddress.transfer(address(this).balance);
     }
 
-    function withdrawBEP20(address _tokenAddress) public payable {
+    function withdrawBEP20(address _tokenAddress) external payable {
         require(msg.sender == devWalletAddress, "!devWalletAddress");
         uint256 tokenBal = IERC20(_tokenAddress).balanceOf(address(this));
         IERC20(_tokenAddress).safeIncreaseAllowance(devWalletAddress, tokenBal);
@@ -572,23 +568,23 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         address _want,
         bool _withUpdate,
         address _strat
-    ) public onlyRole(EXECUTOR_ROLE) {
+    ) external onlyRole(EXECUTOR_ROLE) {
         INativeFarm(_nativefarmAddress).add(0, _want, _withUpdate, _strat); // allocPoint = 0. Schedule set (timelocked) to increase allocPoint.
     }
 
-    function earn(address _stratAddress) public onlyRole(EXECUTOR_ROLE) {
+    function earn(address _stratAddress) external onlyRole(EXECUTOR_ROLE) {
         IStrategy(_stratAddress).earn();
     }
 
-    function farm(address _stratAddress) public onlyRole(EXECUTOR_ROLE) {
+    function farm(address _stratAddress) external onlyRole(EXECUTOR_ROLE) {
         IStrategy(_stratAddress).farm();
     }
 
-    function pause(address _stratAddress) public onlyRole(EXECUTOR_ROLE) {
+    function pause(address _stratAddress) external onlyRole(EXECUTOR_ROLE) {
         IStrategy(_stratAddress).pause();
     }
 
-    function unpause(address _stratAddress) public onlyRole(EXECUTOR_ROLE) {
+    function unpause(address _stratAddress) external onlyRole(EXECUTOR_ROLE) {
         IStrategy(_stratAddress).unpause();
     }
 
@@ -596,36 +592,36 @@ contract TimelockController is AccessControl, ReentrancyGuard {
         address _stratAddress,
         uint256 _borrowRate,
         uint256 _borrowDepth
-    ) public onlyRole(EXECUTOR_ROLE) {
+    ) external onlyRole(EXECUTOR_ROLE) {
         IStrategy(_stratAddress).rebalance(_borrowRate, _borrowDepth);
     }
 
     
-    function deleverageOnce(address _stratAddress) public onlyRole(EXECUTOR_ROLE) nonReentrant {
+    function deleverageOnce(address _stratAddress) external onlyRole(EXECUTOR_ROLE) nonReentrant {
         IStrategy(_stratAddress).deleverageOnce();
     }
 
-    function wrapBNB(address _stratAddress) public onlyRole(EXECUTOR_ROLE) {
+    function wrapBNB(address _stratAddress) external onlyRole(EXECUTOR_ROLE) {
         IStrategy(_stratAddress).wrapBNB();
     }
 
     // // In case new vaults require functions without a timelock as well, hoping to avoid having multiple timelock contracts
     function noTimeLockFunc1(address _stratAddress)
-        public
+        external
         onlyRole(EXECUTOR_ROLE)
     {
         IStrategy(_stratAddress).noTimeLockFunc1();
     }
 
     function noTimeLockFunc2(address _stratAddress)
-        public
+        external
         onlyRole(EXECUTOR_ROLE)
     {
         IStrategy(_stratAddress).noTimeLockFunc2();
     }
 
     function noTimeLockFunc3(address _stratAddress)
-        public
+        external
         onlyRole(EXECUTOR_ROLE)
     {
         IStrategy(_stratAddress).noTimeLockFunc3();
